@@ -9,10 +9,12 @@ using extractor_c.Services;
 public class UploadController : ControllerBase
 {
     private readonly OpenAIService api;
+    private readonly PdfService pdfService;
 
-    public UploadController(OpenAIService api)
+    public UploadController(OpenAIService api, PdfService pdfService)
     {
         this.api = api;
+        this.pdfService = pdfService;
     }
 
     [HttpPost]
@@ -23,9 +25,8 @@ public class UploadController : ControllerBase
             return BadRequest("No file uploaded.");
 
         using var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-        var text = ExtractTextFromPDF(stream); // Replace with real logic
 
+        var text = await pdfService.ExtractTextFromPDF(stream);
         var request = new ExtractFieldsPrompt().Get(text);
 
         foreach (OpenAICommand command in request.messages) {
@@ -33,11 +34,9 @@ public class UploadController : ControllerBase
         }
 
         var result = await api.PostRequest(request);
-        return Ok(JsonSerializer.Deserialize<JsonElement>(result));
-    }
+        
+        Console.Write(result);
 
-    private string ExtractTextFromPDF(Stream stream)
-    {
-        return "Simulated extracted PDF content for now.";
+        return Ok(JsonSerializer.Deserialize<JsonElement>(result));
     }
 }

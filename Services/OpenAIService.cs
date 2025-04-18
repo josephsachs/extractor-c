@@ -4,12 +4,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Text;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,12 +14,10 @@ public class OpenAIService
 {
     private string OrganizationID;
     private string APIKey;
-    private StringBuilder stringBuilder;
     private static readonly HttpClient client = new HttpClient();
 
 
     public OpenAIService() {
-        this.stringBuilder = new StringBuilder();
         this.getAPIConfig();
     }
 
@@ -58,8 +52,8 @@ public class OpenAIService
         {
             string dataAsJson = File.ReadAllText(filePath);
             OpenAIConfigData configData = JsonSerializer.Deserialize<OpenAIConfigData>(dataAsJson);
-            this.OrganizationID = configData.OrganizationID;
             this.APIKey = configData.APIKey;
+            this.OrganizationID = configData.OrganizationID;
         }
         else
         {
@@ -68,26 +62,33 @@ public class OpenAIService
     }
 }
 
+[System.Serializable]
 public class OpenAIConfigData {
-    public string OrganizationID;
-    public string APIKey;
+    public string APIKey { get; set; }
+    public string OrganizationID { get; set; }
 }
 
 [System.Serializable]
 public class OpenAIRequest
 {
-    public string model = "gpt-3.5-turbo";
-    public OpenAICommand[] messages;
+    public string model { get; set; }
+    public OpenAICommand[] messages { get; set; }
+    public int max_completion_tokens { get; set; }
+    public double temperature { get; set; }
+    public double top_p { get; set; }
+    public double frequency_penalty { get; set; }
+    public double presence_penalty { get; set; }
 
-    public int max_tokens = 150;
-    public double temperature = 0;
-    public double top_p = 0.5;
-    public double frequency_penalty = 0;
-    public double presence_penalty = 0;
-
-    public Dictionary<string, int> logit_bias;
+    public Dictionary<string, int> logit_bias { get; set; }
 
     public OpenAIRequest() {
+        model = "gpt-4.1";
+        max_completion_tokens = 35;
+        temperature = 0;
+        top_p = 0.5;
+        frequency_penalty = 0;
+        presence_penalty = 0;
+
         logit_bias = new Dictionary<string, int>();
     }
 }
@@ -100,28 +101,28 @@ public class OpenAIRequestResponseType {
 [System.Serializable]
 public class OpenAICommand 
 {
-    public string role;
-    public string content;
+    public string role { get; set; }
+    public string content { get; set; }
 }
 
 [System.Serializable]
 public class OpenAIResponse
 {
-    public Choice[] choices;
-    public OpenAIUsageData[] usage;
+    public Choice[] choices { get; set; }
+    public OpenAIUsageData[] usage { get; set; }
 }
 
 [System.Serializable]
 public class Choice
 {
-    public int index;
-    public OpenAICommand message;
+    public int index { get; set; }
+    public OpenAICommand message { get; set; }
 }
 
 [System.Serializable]
 public class OpenAIUsageData 
 {
-    public int promptTokens;
-    public int completionTokens;
-    public int totalTokens;
+    public int promptTokens { get; set; }
+    public int completionTokens { get; set; }
+    public int totalTokens { get; set; }
 }

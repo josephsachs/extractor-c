@@ -15,16 +15,10 @@ public class ExtractFieldsPrompt {
     public OpenAIRequest Get(string context) {
         OpenAIRequest request = new OpenAIRequest
             {
-                temperature = 0.7,
-                frequency_penalty = 1.5,
-                logit_bias = {
-                    { "Character1", -100 },
-                    { "Character2", -100 }
-                },
                 messages = new OpenAICommand[] { 
                     new OpenAICommand
                     {
-                        role = "system",
+                        role = "developer",
                         content = "You are extracting data from text and structuring the extracted data as JSON."
                     },
                     new OpenAICommand
