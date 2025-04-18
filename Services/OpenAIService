@@ -1,0 +1,118 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Text;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+
+namespace extractor_c.Services;
+
+public class OpenAIService
+{
+    private string OrganizationID;
+    private string APIKey;
+    private StringBuilder stringBuilder;
+
+    public OpenAIService() {
+        this.stringBuilder = new StringBuilder();
+        this.getAPIConfig();
+    }
+
+    public async Task<string> PostRequest(OpenAIRequest request)
+    {
+        string json = JsonUtility.ToJson(request);
+
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
+
+        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", APIKey);
+        request.Headers.Add("OpenAI-Organization", OrganizationID);
+
+      try {
+            var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            return responseBody;
+        } catch (HttpRequestException e) {
+            Console.WriteLine($"Request error: {e.Message}");
+            throw;
+        }
+    }
+
+    public void getAPIConfig() {
+        string filePath = Path.Combine(Application.dataPath + "/Configs", "openai-api.json");
+
+        if (File.Exists(filePath))
+        {
+            string dataAsJson = File.ReadAllText(filePath);
+            OpenAIConfigData configData = JsonUtility.FromJson<OpenAIConfigData>(dataAsJson);
+            this.OrganizationID = configData.OrganizationID;
+            this.APIKey = configData.APIKey;
+        }
+        else
+        {
+            Debug.LogError("Cannot find config file");
+        }
+    }
+}
+
+public class OpenAIConfigData {
+    public string OrganizationID;
+    public string APIKey;
+}
+
+[System.Serializable]
+public class OpenAIRequest
+{
+    public string model = "gpt-3.5-turbo";
+    public OpenAICommand[] messages;
+
+    public int max_tokens = 150;
+    public double temperature = 0;
+    public double top_p = 0.5;
+    public double frequency_penalty = 0;
+    public double presence_penalty = 0;
+
+    public Dictionary<string, int> logit_bias;
+
+    public OpenAIRequest() {
+        logit_bias = new Dictionary<string, int>();
+    }
+}
+
+[System.Serializable]
+public class OpenAIRequestResponseType {
+    public string type = "";
+}
+
+[System.Serializable]
+public class OpenAICommand 
+{
+    public string role;
+    public string content;
+}
+
+[System.Serializable]
+public class OpenAIResponse
+{
+    public Choice[] choices;
+    public OpenAIUsageData[] usage;
+}
+
+[System.Serializable]
+public class Choice
+{
+    public int index;
+    public OpenAICommand message;
+}
+
+[System.Serializable]
+public class OpenAIUsageData 
+{
+    public int promptTokens;
+    public int completionTokens;
+    public int totalTokens;
+}
