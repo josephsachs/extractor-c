@@ -34,8 +34,6 @@ public class OpenAIService
       try {
             var response = await client.SendAsync(httpRequest);
 
-            //response.EnsureSuccessStatusCode();
-
             var responseBody = await response.Content.ReadAsStringAsync();
             
             if (!response.IsSuccessStatusCode) {
@@ -86,8 +84,8 @@ public class OpenAIRequest
     public int max_completion_tokens { get; set; }
 
     public OpenAIRequest() {
-        model = "o3-mini-2025-01-31";
-        max_completion_tokens = 350;
+      model = "gpt-4-turbo-2024-04-09";
+      max_completion_tokens = 1000;
     }
 }
 
