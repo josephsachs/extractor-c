@@ -33,9 +33,19 @@ public class OpenAIService
 
       try {
             var response = await client.SendAsync(httpRequest);
-            response.EnsureSuccessStatusCode();
+
+            //response.EnsureSuccessStatusCode();
 
             var responseBody = await response.Content.ReadAsStringAsync();
+            
+            if (!response.IsSuccessStatusCode) {
+              Console.WriteLine($"Error Status: {(int)response.StatusCode} {response.StatusCode}");
+              Console.WriteLine($"Response Body: {responseBody}");
+              foreach (var header in response.Headers) {
+                  Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+              }
+              throw new HttpRequestException($"API Error: {responseBody}");
+            }
 
             return responseBody;
         } catch (HttpRequestException e) {
@@ -74,22 +84,10 @@ public class OpenAIRequest
     public string model { get; set; }
     public OpenAICommand[] messages { get; set; }
     public int max_completion_tokens { get; set; }
-    public double temperature { get; set; }
-    public double top_p { get; set; }
-    public double frequency_penalty { get; set; }
-    public double presence_penalty { get; set; }
-
-    public Dictionary<string, int> logit_bias { get; set; }
 
     public OpenAIRequest() {
-        model = "gpt-4.1";
-        max_completion_tokens = 35;
-        temperature = 0;
-        top_p = 0.5;
-        frequency_penalty = 0;
-        presence_penalty = 0;
-
-        logit_bias = new Dictionary<string, int>();
+        model = "o3-mini-2025-01-31";
+        max_completion_tokens = 350;
     }
 }
 
