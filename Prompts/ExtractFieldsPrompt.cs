@@ -1,22 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-
-
 namespace extractor_c.Controllers;
 
+using System.Threading.Tasks;
+using System.Text;
+using Services;
+
+
 public class ExtractFieldsPrompt {
-    public OpenAIService api;
     private StringBuilder stringBuilder;
-    public DialogGenerator(OpenAIService api) {
-        this.api = api;
+
+    public ExtractFieldsPrompt() {
         stringBuilder = new StringBuilder();
     }
 
-    public async Task<string> Generate(string context) {
+    public OpenAIRequest Get(string context) {
         OpenAIRequest request = new OpenAIRequest
             {
                 temperature = 0.7,
@@ -44,15 +40,8 @@ public class ExtractFieldsPrompt {
                 }
             };
 
-
-        foreach (OpenAICommand command in request.messages) {
-            Debug.Log(command.content);
-        }
-
         stringBuilder.Clear();
 
-        string res = await api.PostRequest(request);
-        
-        return res;
+        return request;
     }
 }

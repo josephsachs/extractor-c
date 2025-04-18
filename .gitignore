@@ -7,6 +7,9 @@ artifacts/
 .vscode/
 .idea/
 
+# Deployment info
+Configs/openai-api.json
+
 # OS-specific files
 .DS_Store
 Thumbs.db

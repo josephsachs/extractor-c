@@ -1,3 +1,9 @@
+namespace extractor_c.Services;
+using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -5,32 +11,34 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace extractor_c.Services;
 
 public class OpenAIService
 {
     private string OrganizationID;
     private string APIKey;
     private StringBuilder stringBuilder;
+    private static readonly HttpClient client = new HttpClient();
+
 
     public OpenAIService() {
         this.stringBuilder = new StringBuilder();
         this.getAPIConfig();
     }
 
-    public async Task<string> PostRequest(OpenAIRequest request)
+    public async Task<string> PostRequest(OpenAIRequest openAIRequest)
     {
-        string json = JsonUtility.ToJson(request);
+        string json = JsonSerializer.Serialize(openAIRequest);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
 
-        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", APIKey);
-        request.Headers.Add("OpenAI-Organization", OrganizationID);
+        httpRequest.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", APIKey);
+        httpRequest.Headers.Add("OpenAI-Organization", OrganizationID);
 
       try {
-            var response = await client.SendAsync(request);
+            var response = await client.SendAsync(httpRequest);
             response.EnsureSuccessStatusCode();
 
             var responseBody = await response.Content.ReadAsStringAsync();
@@ -43,18 +51,19 @@ public class OpenAIService
     }
 
     public void getAPIConfig() {
-        string filePath = Path.Combine(Application.dataPath + "/Configs", "openai-api.json");
+        string configDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Configs");
+        string filePath = Path.Combine(configDirectory, "openai-api.json");
 
         if (File.Exists(filePath))
         {
             string dataAsJson = File.ReadAllText(filePath);
-            OpenAIConfigData configData = JsonUtility.FromJson<OpenAIConfigData>(dataAsJson);
+            OpenAIConfigData configData = JsonSerializer.Deserialize<OpenAIConfigData>(dataAsJson);
             this.OrganizationID = configData.OrganizationID;
             this.APIKey = configData.APIKey;
         }
         else
         {
-            Debug.LogError("Cannot find config file");
+            Console.WriteLine("Cannot find config file");
         }
     }
 }

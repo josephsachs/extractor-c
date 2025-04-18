@@ -1,8 +1,8 @@
+namespace extractor_c.Controllers;
+
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using extractor_c.Services;
-
-namespace extractor_c.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -26,7 +26,13 @@ public class UploadController : ControllerBase
         using var reader = new StreamReader(stream);
         var text = ExtractTextFromPDF(stream); // Replace with real logic
 
-        var result = await api.SendChatCompletionRequestAsync(text);
+        var request = new ExtractFieldsPrompt().Get(text);
+
+        foreach (OpenAICommand command in request.messages) {
+            Console.WriteLine(command.content);
+        }
+
+        var result = await api.PostRequest(request);
         return Ok(JsonSerializer.Deserialize<JsonElement>(result));
     }
 
