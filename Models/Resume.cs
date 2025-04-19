@@ -9,8 +9,8 @@ public class Resume {
   public string? Name;
   [JsonPropertyName("address")]
   public string? Address;
-  [JsonPropertyName("phone")]
-  public string[]? Phone;
+  [JsonPropertyName("phone_numbers")]
+  public string[]? PhoneNumbers;
   [JsonPropertyName("email")]
   public string? Email;
   [JsonPropertyName("websites")]
@@ -37,8 +37,8 @@ public class Experience {
   public string? StartDate;
   [JsonPropertyName("end_date")]
   public string? EndDate;
-  [JsonPropertyName("roles")]
-  public string[]? Roles;
+  [JsonPropertyName("responsibilities")]
+  public string[]? Responsibilities;
   [JsonPropertyName("office_type")]
   public string? OfficeType;
   [JsonPropertyName("is_manager")]
@@ -82,7 +82,7 @@ public class Portfolio {
   [JsonPropertyName("url")]
   public string? Url;
   [JsonPropertyName("tools_used")]
-  public string? ToolsUsed;
+  public string[]? ToolsUsed;
   [JsonPropertyName("is_professional")]
   public Boolean? isProfessional;
 }

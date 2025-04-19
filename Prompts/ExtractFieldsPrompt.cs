@@ -11,7 +11,7 @@ public class ExtractFieldsPrompt {
         address: string?,
         phone_numbers: [string]?,
         email: string?,
-        urls: [
+        websites: [
             {
                 name: string?,
                 url: string?

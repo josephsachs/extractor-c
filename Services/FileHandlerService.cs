@@ -2,6 +2,7 @@ namespace extractor_c.Services;
 
 using Prompts;
 using extractor_c.Models;
+using System.Text.Json;
 
 public class FileHandlerService {
 
@@ -31,6 +32,9 @@ public class FileHandlerService {
       result = await Client.MakeRequest(request);
       
       _logger.LogInformation(result.ToString());
+
+      messageContent = result.choices[0].message.content;
+      Resume resume = JsonSerializer.Deserialize<Resume>(messageContent);
 
       return result;
 
