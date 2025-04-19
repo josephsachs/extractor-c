@@ -15,7 +15,6 @@ Configs/openai-api.json
 Thumbs.db
 
 # ASP.NET Core / Web specific
-wwwroot/
 node_modules/
 
 # Visual Studio for Mac specific

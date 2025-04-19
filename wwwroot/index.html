@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Extractor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background-color: #f0f0f0;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .file-label:hover {
+            background-color: #45a049;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+        }
+        
+        #jsonDisplay {
+            width: 100%;
+            min-height: 400px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            padding: 15px;
+            overflow: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        
+        .footer {
+            background-color: #add8e6;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <input type="file" id="fileInput" class="file-input" accept=".pdf">
+        <label for="fileInput" class="file-label">Select PDF File</label>
+    </div>
+    
+    <div class="content">
+        <div id="loadingIndicator" class="loading">
+            <div class="spinner"></div>
+            <p>Processing PDF...</p>
+        </div>
+        <pre id="jsonDisplay">No file processed yet. Select a PDF file to extract data.</pre>
+    </div>
+    
+    <div class="footer">
+        PDF Extractor Tool &copy; 2025
+    </div>
+    
+    <script>
+        document.getElementById('fileInput').addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const jsonDisplay = document.getElementById('jsonDisplay');
+            
+            loadingIndicator.style.display = 'block';
+            jsonDisplay.textContent = 'Processing...';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                let data = await response.json();
+                console.log("Full API Response:", data);
+                
+                let content = "";
+                if (data.choices && data.choices.length > 0 && data.choices[0].message && data.choices[0].message.content) {
+                    content = data.choices[0].message.content;
+                    
+                    if (typeof content === 'string' && 
+                        (content.trim().startsWith('{') || content.trim().startsWith('['))) {
+                        try {
+                            let cleanJson = content
+                                .replace("```", '')
+                                .replace(/\\n/g, '\n')
+                                .replace(/\\"/g, '"')
+                                .replace(/\\t/g, '\t')
+                                .replace(/\\r/g, '');
+                                
+                            if (cleanJson.startsWith('json')) {
+                                cleanJson = cleanJson.substring(4);
+                            }
+                            
+                            const parsedContent = JSON.parse(cleanJson);
+                            content = JSON.stringify(parsedContent, null, 2);
+                        } catch (e) {
+                            console.warn("Failed to parse content as JSON:", e);
+                            content = content
+                                .replace(/\\n/g, '\n')
+                                .replace(/\\"/g, '"')
+                                .replace(/\\t/g, '\t')
+                                .replace(/\\r/g, '');
+                        }
+                    }
+                } else {
+                    content = "No content found in API response";
+                }
+                
+                jsonDisplay.textContent = content;
+            } catch (error) {
+                console.error('Error:', error);
+                jsonDisplay.textContent = `Error processing file: ${error.message}`;
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

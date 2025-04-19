@@ -8,12 +8,12 @@ using extractor_c.Services;
 [Route("api/[controller]")]
 public class UploadController : ControllerBase
 {
-    private readonly OpenAIService api;
+    private readonly OpenAIService client;
     private readonly PdfService pdfService;
 
     public UploadController(OpenAIService api, PdfService pdfService)
     {
-        this.api = api;
+        this.client = api;
         this.pdfService = pdfService;
     }
 
@@ -33,7 +33,7 @@ public class UploadController : ControllerBase
             Console.WriteLine(command.content);
         }
 
-        var result = await api.PostRequest(request);
+        var result = await client.makeRequest(request);
         
         Console.Write(result);
 

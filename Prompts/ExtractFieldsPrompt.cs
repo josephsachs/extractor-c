@@ -9,7 +9,6 @@ public class ExtractFieldsPrompt {
     private StringBuilder stringBuilder;
 
     private string instructions = @"You are extracting data from a property legal document. Please analyze the text and return a JSON with the format: 
-    ```
     {
         covenant: string, 
         covenant_effective_date: string,
@@ -31,7 +30,7 @@ public class ExtractFieldsPrompt {
             ]
         }
     }
-    ```";
+    ";
 
     public ExtractFieldsPrompt() {
         stringBuilder = new StringBuilder();
