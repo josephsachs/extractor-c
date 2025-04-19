@@ -7,17 +7,28 @@ using Models;
 public class ExtractFieldsPrompt {
     private string instructions = @"You are extracting data from a document. Please analyze the text and return a JSON (plaintext, do not format) with the format: 
     {
-        name: string,
+        name: string?,
         address: string?,
         phone_numbers: [string]?,
         email: string?,
+        urls: [
+            {
+                name: string?,
+                url: string?
+            }
+            // ... and so on
+        ],
+        would_relocate: boolean?,
         experience: [
             {
                 title: string?,
                 company_name: string,
                 start_date: string?,
                 end_date: string?,
-                roles: [string]
+                responsibilities: [string]?,
+                office_type: string?, // Onsite || Hybrid || Remote
+                is_manager: boolean?,
+                industry_classification: string?
             },
             // ... and so on
         ],
@@ -26,10 +37,21 @@ public class ExtractFieldsPrompt {
             {
                 degree: string?,
                 certification: string?,
-                date: string,
-                institution: string
+                date: string?,
+                institution: string?,
+                gpa: string?,
+                expiration_date: string?
             },
             // ... and so on
+        ],
+        portfolio: [
+            {
+                project_name: string?,
+                date: string?,
+                url: string?,
+                tools_used: string?,
+                is_professional: boolean?
+            }
         ]
     }
     ";
