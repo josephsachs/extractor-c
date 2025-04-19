@@ -25,6 +25,12 @@ public class Resume {
   public Portfolio[] Portfolio;
   [JsonPropertyName("skills")]
   public string[]? Skills;
+  public Resume()
+  {
+      Experience = Array.Empty<Experience>();
+      Education = Array.Empty<Education>();
+      Portfolio = Array.Empty<Portfolio>();
+  }
 }
 
 [System.Serializable]
