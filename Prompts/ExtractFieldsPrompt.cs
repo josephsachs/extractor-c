@@ -5,8 +5,6 @@ using Models;
 
 
 public class ExtractFieldsPrompt {
-    private StringBuilder stringBuilder;
-
     private string instructions = @"You are extracting data from a document. Please analyze the text and return a JSON (plaintext, do not format) with the format: 
     {
         name: string,
@@ -36,12 +34,8 @@ public class ExtractFieldsPrompt {
     }
     ";
 
-    public ExtractFieldsPrompt() {
-        stringBuilder = new StringBuilder();
-    }
-
-    public OpenAIRequest Get(string context) {
-        OpenAIRequest request = new OpenAIRequest
+    public GPT4Request Get(string context) {
+        GPT4Request request = new GPT4Request
             {
                 messages = new OpenAICommand[] { 
                     new OpenAICommand
@@ -61,8 +55,6 @@ public class ExtractFieldsPrompt {
                     }
                 }
             };
-
-        stringBuilder.Clear();
 
         return request;
     }

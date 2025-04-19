@@ -1,7 +1,7 @@
 namespace extractor_c.Models;
 
 [System.Serializable]
-public class GPT4Request : OpenAIRequest
+public class GPT4Request
 {
     public string model { get; set; }
     public OpenAICommand[] messages { get; set; }

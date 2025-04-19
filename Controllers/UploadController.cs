@@ -1,24 +1,21 @@
 namespace extractor_c.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using extractor_c.Services;
-using extractor_c.Models;
 using extractor_c.Prompts;
+using extractor_c.Models;
 
 [ApiController]
 [Route("api/[controller]")]
 public class UploadController : ControllerBase
 {
-    private readonly OpenAIService client;
-    private readonly PdfService pdfService;
+    private readonly FileHandlerService FileHandlerService;
+    private readonly ILogger<UploadController> _logger;
 
-    private readonly ILogger log = new LoggerFactory().CreateLogger<UploadController>();
-
-    public UploadController(OpenAIService client, PdfService pdfService)
+    public UploadController(FileHandlerService fileHandlerService, ILogger<UploadController> logger)
     {
-        this.client = client;
-        this.pdfService = pdfService;
+        this.FileHandlerService = fileHandlerService;
+        this._logger = logger;
     }
 
     [HttpPost]
@@ -30,21 +27,11 @@ public class UploadController : ControllerBase
 
         try {
             using var stream = file.OpenReadStream();
-            var document = await pdfService.ExtractTextFromPDF(stream);
-            
-            var request = new ExtractFieldsPrompt().Get(document);
-            
-            var result = await client.makeRequest(request);
-            var messageContent = result.choices[0].message.content;
-
-            request = new VerifyFieldsPrompt().Get(messageContent, document);
-
-            result = await client.makeRequest(request);
-            log.LogInformation(result.ToString());
+            OpenAIResponse result = await FileHandlerService.Handle(stream);
             
             return Ok(result);
         } catch (Exception ex) {
-            log.LogError(ex.Message);
+            _logger.LogError(ex.Message);
 
             return StatusCode(500, ex);
         }

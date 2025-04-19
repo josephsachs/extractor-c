@@ -1,9 +1,13 @@
 using extractor_c.Services;
+using extractor_c.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<OpenAIService>();
 builder.Services.AddSingleton<PdfService>();
+builder.Services.AddSingleton<FileHandlerService>();
+builder.Services.Configure<OpenAIConfigData>(
+    builder.Configuration.GetSection("OpenAI"));
 
 builder.Services.AddControllers();
 

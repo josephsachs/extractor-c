@@ -4,7 +4,6 @@ using System.Text;
 using Models;
 
 public class VerifyFieldsPrompt {
-    private StringBuilder stringBuilder;
 
     private string instructions = @"You are verifying your analysis of a document. 
     Please confirm that the information in the Json object's values accurately reflect the information in the document.
@@ -14,12 +13,8 @@ public class VerifyFieldsPrompt {
     - Company names should be names only, no additional information or parentheticals
     ";
 
-    public VerifyFieldsPrompt() {
-        stringBuilder = new StringBuilder();
-    }
-
-    public OpenAIRequest Get(string context, string documentText) {
-        OpenAIRequest request = new OpenAIRequest
+    public GPT4Request Get(string context, string documentText) {
+        GPT4Request request = new GPT4Request
             {
                 messages = new OpenAICommand[] { 
                     new OpenAICommand
@@ -44,8 +39,6 @@ public class VerifyFieldsPrompt {
                     }
                 }
             };
-
-        stringBuilder.Clear();
 
         return request;
     }
