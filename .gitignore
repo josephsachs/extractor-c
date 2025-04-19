@@ -7,9 +7,6 @@ artifacts/
 .vscode/
 .idea/
 
-# Deployment info
-Configs/openai-api.json
-
 # OS-specific files
 .DS_Store
 Thumbs.db
@@ -55,3 +52,7 @@ TestResults/
 # Windows Installer files (if cross-platform)
 *.cab
 *.msi
+
+# Configs
+appsettings.json
+appsettings.Development.json
