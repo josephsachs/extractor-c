@@ -7,29 +7,32 @@ using Models;
 public class ExtractFieldsPrompt {
     private StringBuilder stringBuilder;
 
-    private string instructions = @"You are extracting data from a property legal document. Please analyze the text and return a JSON (plaintext, do not format) with the format: 
+    private string instructions = @"You are extracting data from a document. Please analyze the text and return a JSON (plaintext, do not format) with the format: 
     {
-        covenant: string, 
-        covenant_effective_date: string,
-        developer: string,
-        maximum_allowable_rent: boolean,
-        transferrable: boolean,
-        annual_report: boolean,
-        legal_description: {
-            lot: string,
-            plat: string,
-            subdivision: string,
-            book: string,
-            boundary: [
-                {
-                    description: string
-                },
-                {
-                    description: string
-                }
-                // ... and so on
-            ]
-        }
+        name: string,
+        address: string?,
+        phone_numbers: [string]?,
+        email: string?,
+        experience: [
+            {
+                title: string?,
+                company_name: string,
+                start_date: string?,
+                end_date: string?,
+                roles: [string]
+            },
+            // ... and so on
+        ],
+        skills: [string]?, // these will be scattered around
+        education: [
+            {
+                degree: string?,
+                certification: string?,
+                date: string,
+                institution: string
+            },
+            // ... and so on
+        ]
     }
     ";
 

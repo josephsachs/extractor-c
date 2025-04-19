@@ -6,15 +6,12 @@ using Models;
 public class VerifyFieldsPrompt {
     private StringBuilder stringBuilder;
 
-    private string instructions = @"You are verifying your analysis of a property legal document. 
-    Please confirm that the information in the Json object's values accurately reflect the information in the document document.
+    private string instructions = @"You are verifying your analysis of a document. 
+    Please confirm that the information in the Json object's values accurately reflect the information in the document.
     Return the Json object, with any required corrections to the values. Return only the Json object in plaintext (no formatting, no embed).
     Notes:
-    - when multiple lots occur, list the identifiers with commas
-    - book refers to the place of the recording
-    - maximum_allowable_rent is a boolean that should be true if a maximum allowable rent is defined in the document.
-    - transferrable is a boolean that should be true if there exists any case in which transfer is allowed.
-    - annual_report is a boolean that should be true if the developer is required to make an annual report.
+    - Skills may be scattered in the document, collect them in the array
+    - Company names should be names only, no additional information or parentheticals
     ";
 
     public VerifyFieldsPrompt() {

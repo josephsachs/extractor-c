@@ -30,17 +30,16 @@ public class UploadController : ControllerBase
 
         try {
             using var stream = file.OpenReadStream();
-
             var document = await pdfService.ExtractTextFromPDF(stream);
+            
             var request = new ExtractFieldsPrompt().Get(document);
             
             var result = await client.makeRequest(request);
-
             var messageContent = result.choices[0].message.content;
 
             request = new VerifyFieldsPrompt().Get(messageContent, document);
+
             result = await client.makeRequest(request);
-            
             log.LogInformation(result.ToString());
             
             return Ok(result);
