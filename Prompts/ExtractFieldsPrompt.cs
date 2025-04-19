@@ -26,9 +26,9 @@ public class ExtractFieldsPrompt {
                 start_date: string?,
                 end_date: string?,
                 responsibilities: [string]?,
-                office_type: string?, // Onsite || Hybrid || Remote
+                office_type: string?, // should be 'Onsite', 'Remote', 'Hybrid' or null
                 is_manager: boolean?,
-                industry_classification: string?
+                industry_classification: string? // null if a good category cannot be inferred
             },
             // ... and so on
         ],
@@ -49,7 +49,7 @@ public class ExtractFieldsPrompt {
                 project_name: string?,
                 date: string?,
                 url: string?,
-                tools_used: string?,
+                tools_used: [string]?,
                 is_professional: boolean?
             }
         ]

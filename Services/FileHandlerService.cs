@@ -1,8 +1,6 @@
 namespace extractor_c.Services;
 
 using Prompts;
-using extractor_c.Models;
-using System.Text.Json;
 
 public class FileHandlerService {
 
@@ -17,7 +15,7 @@ public class FileHandlerService {
     this._logger = logger;
   }
 
-  public async Task<OpenAIResponse> Handle(IFormFile file) {
+  public async Task<string> Handle(IFormFile file) {
     try {
       using var stream = file.OpenReadStream();
       var document = await PdfService.ExtractTextFromPDF(stream);
@@ -30,19 +28,14 @@ public class FileHandlerService {
       request = new VerifyFieldsPrompt().Get(messageContent, document);
 
       result = await Client.MakeRequest(request);
-      
-      _logger.LogInformation(result.ToString());
-
       messageContent = result.choices[0].message.content;
-      Resume resume = JsonSerializer.Deserialize<Resume>(messageContent);
 
-      return result;
+      return messageContent;
 
     } catch (Exception ex) {
-      _logger.LogError(ex.Message);
+      _logger.LogError($"Exception in FileHandlerService: {ex.Message}, {ex.StackTrace}");
 
-      return new OpenAIResponse();
+      throw;
     }
-    
   }
 }

@@ -1,6 +1,5 @@
 namespace extractor_c.Prompts;
 
-using System.Text;
 using Models;
 
 public class VerifyFieldsPrompt {
@@ -10,13 +9,14 @@ public class VerifyFieldsPrompt {
     Return the Json object, with any required corrections to the values. Return only the Json object in plaintext (no formatting, no embed).
     Notes:
     - Phone numbers should be unpunctuated.
-    - Responsibilities per job should be summarized with the aim to reduce verbiage.
+    - Responsibilities per job should be summarized with the aim to reduce verbiage. Remove all marketing language and self-promotion. 
+    Remove any kind of vague accomplishment. Remove most adjectives. Max 15 words.
     - Skills may be scattered in the document, collect them in the array. Skills should be short strings. 
     'Databases like MySQL and Mongo' should result in two skills: 'MySQL' and 'Mongo'. A string like 'Key Account Management & Marketing'
-    should result in two skills: 'Key Account Management' and 'Marketing'. Skills can be abstract categories like 'Internet Marketing', 'DevOps' 
-    or names of specific products, but cannot be concepts like 'Raising Productivity', 'Diligently Problem-Solving', etc.. Likewise they cannot be 
-    vague generalities like 'Revenue Increasing' and 'Sales Growth'. They should not be accomplishments like 'Consistently meeting 
-    quotas' or 'Driving 30% more traffic YoY'.
+    should result in two skills: 'Key Account Management' and 'Marketing'. 'C# (.NET)' should result in two skills: 'C#' and '.NET'. 
+    Skills can be abstract categories like 'Internet Marketing', 'DevOps' or names of specific products, but cannot be concepts like 
+    'Raising Productivity', 'Diligently Problem-Solving', etc.. Likewise they cannot be vague generalities like 'Revenue Increasing' 
+    and 'Sales Growth'. They should not be accomplishments like 'Consistently meeting quotas' or 'Driving 30% more traffic YoY'.
     - Company names should be names only, no additional information or parentheticals.
     - Unknown or missing values should be included in the response, but null.
     ";

@@ -19,14 +19,14 @@ public class UploadController : ControllerBase
     }
 
     [HttpPost]
-    [RequestSizeLimit(10 * 1024 * 1024)]
+    [RequestSizeLimit(2 * 1024 * 1024)]
     public async Task<IActionResult> Upload(IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file uploaded.");
 
         try {
-            OpenAIResponse result = await FileHandlerService.Handle(file);
+            string result = await FileHandlerService.Handle(file);
             
             return Ok(result);
         } catch (JsonException ex) {

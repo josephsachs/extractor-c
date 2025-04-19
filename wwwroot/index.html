@@ -129,42 +129,8 @@
                 }
                 
                 let data = await response.json();
-                console.log("Full API Response:", data);
-                
-                let content = "";
-                if (data.choices && data.choices.length > 0 && data.choices[0].message && data.choices[0].message.content) {
-                    content = data.choices[0].message.content;
-                    
-                    if (typeof content === 'string' && 
-                        (content.trim().startsWith('{') || content.trim().startsWith('['))) {
-                        try {
-                            let cleanJson = content
-                                .replace("```", '')
-                                .replace(/\\n/g, '\n')
-                                .replace(/\\"/g, '"')
-                                .replace(/\\t/g, '\t')
-                                .replace(/\\r/g, '');
                                 
-                            if (cleanJson.startsWith('json')) {
-                                cleanJson = cleanJson.substring(4);
-                            }
-                            
-                            const parsedContent = JSON.parse(cleanJson);
-                            content = JSON.stringify(parsedContent, null, 2);
-                        } catch (e) {
-                            console.warn("Failed to parse content as JSON:", e);
-                            content = content
-                                .replace(/\\n/g, '\n')
-                                .replace(/\\"/g, '"')
-                                .replace(/\\t/g, '\t')
-                                .replace(/\\r/g, '');
-                        }
-                    }
-                } else {
-                    content = "No content found in API response";
-                }
-                
-                jsonDisplay.textContent = content;
+                jsonDisplay.textContent = JSON.stringify(data, null, 2);
             } catch (error) {
                 console.error('Error:', error);
                 jsonDisplay.textContent = `Error processing file: ${error.message}`;
