@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text.Json;
+using Models;
 
 public class OpenAIService
 {
@@ -13,12 +14,12 @@ public class OpenAIService
     private string APIKey;
     private static readonly HttpClient client = new HttpClient();
 
-
+    private readonly ILogger log = new LoggerFactory().CreateLogger<OpenAIService>();
     public OpenAIService() {
         this.getAPIConfig();
     }
 
-    public async Task<string> makeRequest(OpenAIRequest openAIRequest)
+    public async Task<OpenAIResponse> makeRequest(OpenAIRequest openAIRequest)
     {
       string json = JsonSerializer.Serialize(openAIRequest);
 
@@ -30,22 +31,17 @@ public class OpenAIService
 
       try {
           var response = await client.SendAsync(httpRequest);
-
           var responseBody = await response.Content.ReadAsStringAsync();
             
           if (!response.IsSuccessStatusCode) {
-            Console.WriteLine($"Error Status: {(int)response.StatusCode} {response.StatusCode}");
-            Console.WriteLine($"Response Body: {responseBody}");
-
-            foreach (var header in response.Headers) {
-                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-            }
+            log.LogError($"Error Status: {(int)response.StatusCode} {response.StatusCode}");
+            log.LogError($"Response Body: {responseBody}");
             throw new HttpRequestException($"API Error: {responseBody}");
           }
 
-          return responseBody;
+          return JsonSerializer.Deserialize<OpenAIResponse>(responseBody);
       } catch (HttpRequestException e) {
-          Console.WriteLine($"Request error: {e.Message}");
+          log.LogError($"Request error: {e.Message}");
           throw;
       }
     }
@@ -54,17 +50,16 @@ public class OpenAIService
         string configDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Configs");
         string filePath = Path.Combine(configDirectory, "openai-api.json");
 
-        if (File.Exists(filePath))
-        {
+        try {
             string dataAsJson = File.ReadAllText(filePath);
             OpenAIConfigData configData = JsonSerializer.Deserialize<OpenAIConfigData>(dataAsJson);
             
             this.APIKey = configData.APIKey;
             this.OrganizationID = configData.OrganizationID;
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine("Cannot find config file");
+            log.LogError(ex.Message);
         }
     }
 }

@@ -1,24 +1,25 @@
-namespace extractor_c.Controllers;
+namespace extractor_c.Prompts;
 
-using System.Threading.Tasks;
 using System.Text;
-using Services;
+using Models;
 
 
 public class ExtractFieldsPrompt {
     private StringBuilder stringBuilder;
 
-    private string instructions = @"You are extracting data from a property legal document. Please analyze the text and return a JSON with the format: 
+    private string instructions = @"You are extracting data from a property legal document. Please analyze the text and return a JSON (plaintext, do not format) with the format: 
     {
         covenant: string, 
         covenant_effective_date: string,
         developer: string,
         maximum_allowable_rent: boolean,
         transferrable: boolean,
+        annual_report: boolean,
         legal_description: {
             lot: string,
             plat: string,
             subdivision: string,
+            book: string,
             boundary: [
                 {
                     description: string
