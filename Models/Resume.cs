@@ -2,17 +2,6 @@ namespace extractor_c.Models;
 
 using System.Text.Json.Serialization;
 
-[System.Serializable]
-public class PersonalInformation {
-  [JsonPropertyName("name")]
-  public string? Name;
-  [JsonPropertyName("address")]
-  public string? Address;
-  [JsonPropertyName("phone")]
-  public string[]? Phone;
-  [JsonPropertyName("email")]
-  public string? Email;
-}
 
 [System.Serializable]
 public class Experience {
@@ -43,8 +32,14 @@ public class Education {
 
 [System.Serializable]
 public class Resume {
-  [JsonPropertyName("personal_information")]
-  public PersonalInformation PersonalInformation;
+  [JsonPropertyName("name")]
+  public string? Name;
+  [JsonPropertyName("address")]
+  public string? Address;
+  [JsonPropertyName("phone")]
+  public string[]? Phone;
+  [JsonPropertyName("email")]
+  public string? Email;
   [JsonPropertyName("experience")]
   public Experience Experience;
   [JsonPropertyName("education")]
