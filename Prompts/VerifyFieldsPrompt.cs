@@ -11,9 +11,11 @@ public class VerifyFieldsPrompt {
     Notes:
     - Phone numbers should be unpunctuated
     - Skills may be scattered in the document, collect them in the array. Skills should be short strings. 
-    'Databases like MySQL and Mongo' should result in two skills: 'MySQL' and 'Mongo'. Skills can be 
-    abstract categories like 'DevOps' or can be names of specific products, but cannot be concepts like 
-    'Raising Productivity', 'Diligently Problem-Solving', etc.. 
+    'Databases like MySQL and Mongo' should result in two skills: 'MySQL' and 'Mongo'. A string like 'Key Account Management & Marketing'
+    should result in two skills: 'Key Account Management' and 'Marketing'. Skills can be abstract categories like 'DevOps' or names of 
+    specific products, but cannot be concepts like 'Raising Productivity', 'Diligently Problem-Solving', etc.. Likewise they cannot be 
+    vague generalities like 'Revenue Increasing' and 'Sales Growth'. They should not be accomplishments like 'Consistently meeting 
+    quotas' or 'Driving 30% more traffic YoY'.
     - Company names should be names only, no additional information or parentheticals
     - Unknown or missing values should be null
     ";
