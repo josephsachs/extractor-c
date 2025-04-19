@@ -11,9 +11,9 @@ public class UploadController : ControllerBase
     private readonly OpenAIService client;
     private readonly PdfService pdfService;
 
-    public UploadController(OpenAIService api, PdfService pdfService)
+    public UploadController(OpenAIService client, PdfService pdfService)
     {
-        this.client = api;
+        this.client = client;
         this.pdfService = pdfService;
     }
 
