@@ -16,19 +16,29 @@ public class FileHandlerService {
     this._logger = logger;
   }
 
-  public async Task<OpenAIResponse> Handle(Stream stream) {
-    var document = await PdfService.ExtractTextFromPDF(stream);
+  public async Task<OpenAIResponse> Handle(IFormFile file) {
+    try {
+      using var stream = file.OpenReadStream();
+      var document = await PdfService.ExtractTextFromPDF(stream);
             
-    var request = new ExtractFieldsPrompt().Get(document);
-            
-    var result = await Client.makeRequest(request);
-    var messageContent = result.choices[0].message.content;
+      var request = new ExtractFieldsPrompt().Get(document);
+              
+      var result = await Client.MakeRequest(request);
+      var messageContent = result.choices[0].message.content;
 
-    request = new VerifyFieldsPrompt().Get(messageContent, document);
+      request = new VerifyFieldsPrompt().Get(messageContent, document);
 
-    result = await Client.makeRequest(request);
-    _logger.LogInformation(result.ToString());
+      result = await Client.MakeRequest(request);
+      
+      _logger.LogInformation(result.ToString());
 
-    return result;
+      return result;
+
+    } catch (Exception ex) {
+      _logger.LogError(ex.Message);
+
+      return new OpenAIResponse();
+    }
+    
   }
 }

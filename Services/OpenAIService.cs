@@ -11,17 +11,18 @@ public class OpenAIService
 {
     private string OrganizationID;
     private string APIKey;
-    private static readonly HttpClient Client = new HttpClient();
+    private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
-    public OpenAIService(ILogger<OpenAIService> logger, IOptions<OpenAIConfigData> options)
+    public OpenAIService(ILogger<OpenAIService> logger, IOptions<OpenAIConfigData> options, IHttpClientFactory httpClientFactory)
     {
         var config = options.Value;
-        this.APIKey = config.APIKey;
-        this.OrganizationID = config.OrganizationID;
-        this._logger = logger;
+        APIKey = config.APIKey;
+        OrganizationID = config.OrganizationID;
+        _logger = logger;
+        _httpClient = httpClientFactory.CreateClient("OpenAI");
     }
 
-    public async Task<OpenAIResponse> makeRequest(GPT4Request request)
+    public async Task<OpenAIResponse> MakeRequest(GPT4Request request)
     {
       string json = JsonSerializer.Serialize(request);
 
@@ -32,7 +33,7 @@ public class OpenAIService
       httpRequest.Headers.Add("OpenAI-Organization", OrganizationID);
 
       try {
-          var response = await Client.SendAsync(httpRequest);
+          var response = await _httpClient.SendAsync(httpRequest);
           var responseBody = await response.Content.ReadAsStringAsync();
             
           if (!response.IsSuccessStatusCode) {

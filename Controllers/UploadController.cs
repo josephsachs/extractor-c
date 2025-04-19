@@ -1,8 +1,8 @@
 namespace extractor_c.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using extractor_c.Services;
-using extractor_c.Prompts;
 using extractor_c.Models;
 
 [ApiController]
@@ -26,14 +26,17 @@ public class UploadController : ControllerBase
             return BadRequest("No file uploaded.");
 
         try {
-            using var stream = file.OpenReadStream();
-            OpenAIResponse result = await FileHandlerService.Handle(stream);
+            OpenAIResponse result = await FileHandlerService.Handle(file);
             
             return Ok(result);
+        } catch (JsonException ex) {
+            _logger.LogWarning("OpenAI returned non-JSON content: {Content}", ex.Message);
+            
+            return StatusCode(500, "The AI model did not return valid JSON data");
         } catch (Exception ex) {
             _logger.LogError(ex.Message);
 
-            return StatusCode(500, ex);
+            return StatusCode(500, "An error occurred");
         }
     }
 }
